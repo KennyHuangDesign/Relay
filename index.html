@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Relay</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- SCREEN 1: Setup -->
+        <div id="setup-screen" class="screen active">
+            <div class="header">
+                <div class="logo">R</div>
+                <h1>Relay</h1>
+                <p class="subtitle">Social Task Agent</p>
+            </div>
+            <div class="form">
+                <label>Who is Relay calling?</label>
+                <input type="text" id="contact-name" placeholder="e.g. Dr. Smith's Office">
+
+                <label>What should Relay do?</label>
+                <textarea id="task-desc" rows="4"
+                    placeholder="e.g. Book an appointment for Thursday after 2pm. My name is Kenny Huang."></textarea>
+
+                <label>How will you communicate during the call?</label>
+                <div class="toggle-row">
+                    <button class="toggle-btn active" data-mode="sms">Text (SMS)</button>
+                    <button class="toggle-btn" data-mode="voice">Voice</button>
+                </div>
+
+                <button id="btn-start-call" class="primary-btn">Start Call</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: Active Call -->
+        <div id="call-screen" class="screen">
+            <div class="call-bar">
+                <div class="call-bar-left">
+                    <div class="avatar"></div>
+                    <div>
+                        <div id="call-name" class="call-name">Contact</div>
+                        <div class="relay-tag">Relay Active</div>
+                    </div>
+                </div>
+                <div id="timer" class="timer">00:00</div>
+            </div>
+
+            <div id="transcript" class="transcript"></div>
+
+            <!-- SMS input -->
+            <div id="sms-bar" class="input-bar">
+                <input type="text" id="sms-input" placeholder="Guide Relay or respond as the other party...">
+                <button id="btn-sms-send" class="send-btn">Send</button>
+            </div>
+
+            <!-- Voice input -->
+            <div id="voice-bar" class="input-bar" style="display:none">
+                <button id="btn-mic" class="mic-btn">Hold to Speak</button>
+            </div>
+
+            <button id="btn-end-call" class="end-btn">End Call</button>
+        </div>
+
+        <!-- SCREEN 3: Post-Call -->
+        <div id="postcall-screen" class="screen">
+            <div class="header">
+                <h1>Call Complete</h1>
+                <p class="subtitle" id="call-duration"></p>
+            </div>
+            <div id="final-transcript" class="transcript"></div>
+            <button id="btn-new-call" class="primary-btn">New Call</button>
+        </div>
+
+        <!-- SCREEN 4: Incoming Call -->
+        <div id="incoming-screen" class="screen">
+            <div class="incoming-center">
+                <div class="avatar large"></div>
+                <div id="incoming-name" class="incoming-name">Unknown</div>
+                <div class="incoming-label">Incoming Call</div>
+            </div>
+            <div class="incoming-buttons">
+                <button id="btn-decline" class="circle-btn decline">Decline</button>
+                <button id="btn-relay" class="circle-btn relay">Relay</button>
+                <button id="btn-answer" class="circle-btn answer">Answer</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
