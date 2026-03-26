@@ -1,0 +1,383 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box
+}
+
+:root {
+    --bg: #0a0a0a;
+    --bg2: #141414;
+    --card: #1a1a1a;
+    --border: #2a2a2a;
+    --text: #fff;
+    --text2: #9ca3af;
+    --green: #34d399;
+    --red: #ef4444;
+    --blue: #60a5fa;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#app {
+    max-width: 430px;
+    margin: 0 auto;
+    height: 100vh;
+    height: 100dvh;
+    position: relative
+}
+
+.screen {
+    display: none;
+    height: 100%;
+    flex-direction: column
+}
+
+.screen.active {
+    display: flex
+}
+
+/* Header */
+.header {
+    padding: 60px 24px 20px;
+    text-align: center
+}
+
+.logo {
+    width: 64px;
+    height: 64px;
+    background: var(--green);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--bg);
+    margin: 0 auto 12px;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 700
+}
+
+.subtitle {
+    color: var(--text2);
+    font-size: 14px;
+    margin-top: 4px
+}
+
+/* Form */
+.form {
+    padding: 0 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto
+}
+
+.form label {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 6px
+}
+
+.form input,
+.form textarea {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-size: 16px;
+    outline: none;
+    font-family: inherit;
+    resize: none;
+}
+
+.toggle-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text2);
+    font-size: 15px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.toggle-btn.active {
+    background: var(--green);
+    color: var(--bg);
+    border-color: var(--green);
+    font-weight: 600
+}
+
+.primary-btn {
+    margin-top: auto;
+    margin-bottom: 32px;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    background: var(--green);
+    color: var(--bg);
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* Call Screen */
+.call-bar {
+    padding: 56px 24px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.call-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px
+}
+
+.avatar {
+    width: 44px;
+    height: 44px;
+    background: var(--card);
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+}
+
+.avatar.large {
+    width: 80px;
+    height: 80px
+}
+
+.call-name {
+    font-size: 16px;
+    font-weight: 600
+}
+
+.relay-tag {
+    font-size: 11px;
+    background: var(--green);
+    color: var(--bg);
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.timer {
+    font-size: 14px;
+    color: var(--text2);
+    font-variant-numeric: tabular-nums
+}
+
+/* Transcript */
+.transcript {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px
+}
+
+.msg {
+    margin-bottom: 14px
+}
+
+.msg-role {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px
+}
+
+.msg-role.relay {
+    color: var(--green)
+}
+
+.msg-role.user {
+    color: var(--blue)
+}
+
+.msg-role.system {
+    color: var(--text2)
+}
+
+.msg-role.instruction {
+    color: #f59e0b
+}
+
+.msg-text {
+    font-size: 15px;
+    line-height: 1.5;
+    background: var(--card);
+    padding: 10px 14px;
+    border-radius: 12px;
+}
+
+/* Input bars */
+.input-bar {
+    padding: 10px 24px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    border-top: 1px solid var(--border);
+}
+
+#sms-input {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 10px 16px;
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    font-family: inherit;
+}
+
+.send-btn {
+    background: var(--green);
+    color: var(--bg);
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.mic-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid var(--green);
+    background: transparent;
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0 auto;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.mic-btn.listening {
+    background: var(--green);
+    color: var(--bg);
+    transform: scale(1.1)
+}
+
+.end-btn {
+    margin: 8px 24px 32px;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    background: var(--red);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* Incoming */
+.incoming-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.incoming-name {
+    font-size: 24px;
+    font-weight: 600
+}
+
+.incoming-label {
+    color: var(--text2);
+    font-size: 14px
+}
+
+.incoming-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding-bottom: 64px
+}
+
+.circle-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.circle-btn.decline {
+    background: var(--red);
+    color: #fff
+}
+
+.circle-btn.relay {
+    background: #2563eb;
+    color: #fff
+}
+
+.circle-btn.answer {
+    background: var(--green);
+    color: var(--bg)
+}
+
+/* Loading dots */
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: .2
+    }
+
+    50% {
+        opacity: 1
+    }
+}
+
+.loading-dots span {
+    animation: blink 1.4s infinite;
+    font-size: 20px
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: .2s
+}
+
+.loading-dots span:nth-child(3) {
+    animation-delay: .4s
+}
