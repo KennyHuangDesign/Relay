@@ -168,7 +168,7 @@ document.getElementById('btn-start-call').addEventListener('click', async () => 
         await connect();
         removeLoading();
         addLoading();
-        send({ type: 'start_call', context: `Calling ${name}. Task: ${task}` });
+        send({ type: 'start_call', context: 'Calling Gio\'s Restaurant. Task: Book a table for 2 this Saturday at 7pm.', agent: 'restaurant' });
     } catch (e) {
         addMsg('system', 'Failed to connect. Is the backend running?');
     }
