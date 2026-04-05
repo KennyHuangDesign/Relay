@@ -192,66 +192,152 @@ document.getElementById('sms-input').addEventListener('keydown', (e) => {
 });
 
 // ============================================================
-// VOICE INPUT (Web Speech API)
+// VOICE INPUT (MediaRecorder - works on iOS and Android)
 // ============================================================
-if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    recognition = new SR();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
+const BACKEND_HTTP = BACKEND.replace('wss://', 'https://');
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
 
-    recognition.onresult = (e) => {
-        const text = e.results[0][0].transcript;
+async function startRecording() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        // Find a supported MIME type
+        let mimeType = 'audio/webm';
+        if (!MediaRecorder.isTypeSupported('audio/webm')) {
+            mimeType = 'audio/mp4';
+        }
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = '';  // Let the browser pick
+        }
+
+        const options = mimeType ? { mimeType } : {};
+        mediaRecorder = new MediaRecorder(stream, options);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        console.log('Recording started with MIME:', mediaRecorder.mimeType);
+    } catch (err) {
+        console.error('Microphone access error:', err);
+        addMsg('system', 'Microphone access denied. Please allow microphone access and try again.');
+    }
+}
+
+async function stopRecordingAndTranscribe() {
+    if (!mediaRecorder || !isRecording) return '';
+
+    return new Promise((resolve) => {
+        mediaRecorder.onstop = async () => {
+            // Stop all tracks to release the microphone
+            mediaRecorder.stream.getTracks().forEach(t => t.stop());
+            isRecording = false;
+
+            if (audioChunks.length === 0) {
+                resolve('');
+                return;
+            }
+
+            const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType });
+            console.log('Audio blob size:', blob.size, 'type:', blob.type);
+
+            // Determine file extension from MIME type
+            let ext = 'webm';
+            if (blob.type.includes('mp4')) ext = 'mp4';
+            if (blob.type.includes('wav')) ext = 'wav';
+
+            const formData = new FormData();
+            formData.append('audio', blob, 'recording.' + ext);
+
+            try {
+                addMsg('system', 'Transcribing...');
+                const response = await fetch(BACKEND_HTTP + '/transcribe', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    console.error('Transcription HTTP error:', response.status);
+                    // Remove the "Transcribing..." message
+                    const msgs = document.querySelectorAll('.msg');
+                    const last = msgs[msgs.length - 1];
+                    if (last && last.textContent.includes('Transcribing')) last.remove();
+                    resolve('');
+                    return;
+                }
+
+                const data = await response.json();
+                // Remove the "Transcribing..." message
+                const msgs = document.querySelectorAll('.msg');
+                const last = msgs[msgs.length - 1];
+                if (last && last.textContent.includes('Transcribing')) last.remove();
+
+                resolve(data.text || '');
+            } catch (e) {
+                console.error('Transcription fetch error:', e);
+                const msgs = document.querySelectorAll('.msg');
+                const last = msgs[msgs.length - 1];
+                if (last && last.textContent.includes('Transcribing')) last.remove();
+                resolve('');
+            }
+        };
+
+        mediaRecorder.stop();
+    });
+}
+
+const micBtn = document.getElementById('btn-mic');
+
+micBtn.addEventListener('mousedown', async (e) => {
+    e.preventDefault();
+    if (!isRecording) {
+        await startRecording();
+        micBtn.classList.add('listening');
+        micBtn.textContent = 'Listening...';
+    }
+});
+
+micBtn.addEventListener('mouseup', async (e) => {
+    e.preventDefault();
+    if (isRecording) {
+        micBtn.classList.remove('listening');
+        micBtn.textContent = 'Hold to Speak';
+        const text = await stopRecordingAndTranscribe();
         if (text.trim()) {
             addMsg('user', text);
             addLoading();
             send({ type: 'user_speech', text });
         }
-    };
-    recognition.onend = () => {
-        document.getElementById('btn-mic').classList.remove('listening');
-    };
-}
-
-const micBtn = document.getElementById('btn-mic');
-['mousedown', 'touchstart'].forEach(evt => {
-    micBtn.addEventListener(evt, (e) => {
-        e.preventDefault();
-        if (recognition) { recognition.start(); micBtn.classList.add('listening'); }
-    });
-});
-['mouseup', 'touchend'].forEach(evt => {
-    micBtn.addEventListener(evt, (e) => {
-        e.preventDefault();
-        if (recognition) { recognition.stop(); }
-    });
+    }
 });
 
-// ============================================================
-// END CALL
-// ============================================================
-document.getElementById('btn-end-call').addEventListener('click', () => {
-    send({ type: 'end_call' });
-    endCall(null);
+micBtn.addEventListener('touchstart', async (e) => {
+    e.preventDefault();
+    if (!isRecording) {
+        await startRecording();
+        micBtn.classList.add('listening');
+        micBtn.textContent = 'Listening...';
+    }
 });
 
-function endCall(transcript) {
-    stopTimer();
-    if (ws) ws.close();
-
-    const m = String(Math.floor(seconds / 60)).padStart(2, '0');
-    const s = String(seconds % 60).padStart(2, '0');
-    document.getElementById('call-duration').textContent = `Duration: ${m}:${s}`;
-
-    // Copy transcript to post-call screen
-    const final = document.getElementById('final-transcript');
-    final.innerHTML = document.getElementById('transcript').innerHTML;
-    // Remove loading dots and system messages from final view
-    final.querySelectorAll('.loading-msg').forEach(el => el.remove());
-
-    show('postcall-screen');
-}
+micBtn.addEventListener('touchend', async (e) => {
+    e.preventDefault();
+    if (isRecording) {
+        micBtn.classList.remove('listening');
+        micBtn.textContent = 'Hold to Speak';
+        const text = await stopRecordingAndTranscribe();
+        if (text.trim()) {
+            addMsg('user', text);
+            addLoading();
+            send({ type: 'user_speech', text });
+        }
+    }
+});
 
 // ============================================================
 // NEW CALL
