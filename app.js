@@ -143,6 +143,29 @@ function send(obj) {
 }
 
 // ============================================================
+// END CALL
+// ============================================================
+document.getElementById('btn-end-call').addEventListener('click', () => {
+  send({ type: 'end_call' });
+  endCall(null);
+});
+
+function endCall(transcript) {
+  stopTimer();
+  if (ws) ws.close();
+
+  const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const s = String(seconds % 60).padStart(2, '0');
+  document.getElementById('call-duration').textContent = 'Duration: ' + m + ':' + s;
+
+  const final = document.getElementById('final-transcript');
+  final.innerHTML = document.getElementById('transcript').innerHTML;
+  final.querySelectorAll('.loading-msg').forEach(el => el.remove());
+
+  show('postcall-screen');
+}
+
+// ============================================================
 // START CALL
 // ============================================================
 document.getElementById('btn-start-call').addEventListener('click', async () => {
