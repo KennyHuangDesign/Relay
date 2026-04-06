@@ -381,3 +381,11 @@ h1 {
 .loading-dots span:nth-child(3) {
     animation-delay: .4s
 }
+
+.task-input-row{display:flex;flex-direction:column;gap:8px}
+.voice-task-btn{
+  padding:12px;border-radius:10px;border:1px solid var(--border);
+  background:var(--card);color:var(--text2);font-size:14px;cursor:pointer;
+  font-family:inherit;transition:all 0.15s;
+}
+.voice-task-btn.recording{background:var(--red);color:#fff;border-color:var(--red)}
