@@ -2,101 +2,556 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Relay</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Relay</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div id="app">
+  <div id="app">
 
-        <!-- SCREEN 1: Setup -->
-        <div id="setup-screen" class="screen active">
-            <div class="header">
-                <div class="logo">R</div>
-                <h1>Relay</h1>
-                <p class="subtitle">Social Task Agent</p>
-            </div>
-            <div class="form">
-                <label>Who is Relay calling?</label>
-                <input type="text" id="contact-name" placeholder="e.g. Dr. Smith's Office">
-
-                <label>What should Relay do?</label>
-                <div class="task-input-row">
-                <textarea id="task-desc" rows="4" placeholder="e.g. Book an appointment for Thursday after 2pm. My name is Kenny Huang."></textarea>
-                <button id="btn-voice-task" class="voice-task-btn">Tap to Dictate</button>
-                </div>
-
-                <label>How will you communicate during the call?</label>
-                <div class="toggle-row">
-                    <button class="toggle-btn active" data-mode="sms">Text (SMS)</button>
-                    <button class="toggle-btn" data-mode="voice">Voice</button>
-                </div>
-
-                <button id="btn-start-call" class="primary-btn">Start Call</button>
-            </div>
+    <!-- ==================== HOME SCREEN ==================== -->
+    <div id="home-screen" class="screen active">
+      <div class="phone-status-bar">
+        <span class="status-time" id="status-time">9:41</span>
+        <span class="status-icons">
+          <span class="signal">&#9679;&#9679;&#9679;&#9679;</span>
+          <span class="wifi"><svg width="15" height="11" viewBox="0 0 15 11" fill="none">
+              <path d="M7.5 9.5a1 1 0 110 1.5 1 1 0 010-1.5z" fill="white" />
+              <path d="M5.2 8a3.5 3.5 0 014.6 0" stroke="white" stroke-width="1.3" stroke-linecap="round" />
+              <path d="M2.8 5.5a7 7 0 019.4 0" stroke="white" stroke-width="1.3" stroke-linecap="round" />
+              <path d="M0.5 3a10.5 10.5 0 0114 0" stroke="white" stroke-width="1.3" stroke-linecap="round" />
+            </svg></span>
+          <span class="battery"><svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+              <rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="white" stroke-opacity="0.4" />
+              <rect x="2" y="2" width="18" height="8" rx="1.5" fill="white" />
+              <path d="M23 4v4a2 2 0 000-4z" fill="white" fill-opacity="0.4" />
+            </svg></span>
+        </span>
+      </div>
+      <div class="home-bg" id="home-bg">
+        <div class="home-top-space"></div>
+        <div class="app-grid">
+          <!-- Row 1 -->
+          <div class="app-icon" data-app="calendar">
+            <div class="icon-img icon-calendar"><span class="cal-day" id="home-cal-day"></span></div>
+            <span class="icon-label">Calendar</span>
+          </div>
+          <div class="app-icon" data-app="contacts">
+            <div class="icon-img icon-contacts"></div>
+            <span class="icon-label">Contacts</span>
+          </div>
+          <div class="app-icon" data-app="settings">
+            <div class="icon-img icon-settings"></div>
+            <span class="icon-label">Settings</span>
+          </div>
+          <div class="app-icon" data-app="none">
+            <div class="icon-img icon-photos"></div>
+            <span class="icon-label">Photos</span>
+          </div>
+          <!-- Row 2 -->
+          <div class="app-icon" data-app="none">
+            <div class="icon-img icon-camera"></div>
+            <span class="icon-label">Camera</span>
+          </div>
+          <div class="app-icon" data-app="none">
+            <div class="icon-img icon-maps"></div>
+            <span class="icon-label">Maps</span>
+          </div>
+          <div class="app-icon" data-app="none">
+            <div class="icon-img icon-weather"></div>
+            <span class="icon-label">Weather</span>
+          </div>
+          <div class="app-icon" data-app="none">
+            <div class="icon-img icon-notes"></div>
+            <span class="icon-label">Notes</span>
+          </div>
+          <!-- Row 3 -->
+          <div class="app-icon" data-app="none">
+            <div class="icon-img icon-music"></div>
+            <span class="icon-label">Music</span>
+          </div>
+          <div class="app-icon" data-app="none">
+            <div class="icon-img icon-clock"></div>
+            <span class="icon-label">Clock</span>
+          </div>
+          <div class="app-icon" data-app="none">
+            <div class="icon-img icon-appstore"></div>
+            <span class="icon-label">App Store</span>
+          </div>
+          <div class="app-icon" data-app="none">
+            <div class="icon-img icon-health"></div>
+            <span class="icon-label">Health</span>
+          </div>
         </div>
-
-        <!-- SCREEN 2: Active Call -->
-        <div id="call-screen" class="screen">
-            <div class="call-bar">
-                <div class="call-bar-left">
-                    <div class="avatar"></div>
-                    <div>
-                        <div id="call-name" class="call-name">Contact</div>
-                        <div class="relay-tag">Relay Active</div>
-                    </div>
-                </div>
-                <div id="timer" class="timer">00:00</div>
-            </div>
-
-            <div id="transcript" class="transcript"></div>
-
-            <!-- SMS input -->
-            <div id="sms-bar" class="input-bar">
-                <input type="text" id="sms-input" placeholder="Guide Relay or respond as the other party...">
-                <button id="btn-sms-send" class="send-btn">Send</button>
-            </div>
-
-            <!-- Voice input -->
-            <div id="voice-bar" class="input-bar" style="display:none">
-                <button id="btn-mic" class="mic-btn">Hold to Speak</button>
-            </div>
-
-            <button id="btn-switch-mode" class="switch-mode-btn">Switch to Voice</button>
-            <button id="btn-end-call" class="end-btn">End Call</button>
+        <!-- Dock -->
+        <div class="dock">
+          <div class="app-icon dock-icon" data-app="phone">
+            <div class="icon-img icon-phone"></div>
+          </div>
+          <div class="app-icon dock-icon" data-app="none">
+            <div class="icon-img icon-messages"></div>
+          </div>
+          <div class="app-icon dock-icon" data-app="none">
+            <div class="icon-img icon-mail"></div>
+          </div>
+          <div class="app-icon dock-icon" data-app="none">
+            <div class="icon-img icon-browser"></div>
+          </div>
         </div>
-
-        <!-- SCREEN 3: Post-Call -->
-        <div id="postcall-screen" class="screen">
-            <div class="header">
-                <h1>Call Complete</h1>
-                <p class="subtitle" id="call-duration"></p>
-            </div>
-            <div id="final-transcript" class="transcript"></div>
-            <button id="btn-new-call" class="primary-btn">New Call</button>
-        </div>
-
-        <!-- SCREEN 4: Incoming Call -->
-        <div id="incoming-screen" class="screen">
-            <div class="incoming-center">
-                <div class="avatar large"></div>
-                <div id="incoming-name" class="incoming-name">Unknown</div>
-                <div class="incoming-label">Incoming Call</div>
-            </div>
-            <div class="incoming-buttons">
-                <button id="btn-decline" class="circle-btn decline">Decline</button>
-                <button id="btn-relay" class="circle-btn relay">Relay</button>
-                <button id="btn-answer" class="circle-btn answer">Answer</button>
-            </div>
-        </div>
-
+      </div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- ==================== SETTINGS APP ==================== -->
+    <div id="settings-screen" class="screen">
+      <div class="app-header">
+        <button class="back-btn" data-back="home-screen">&#8249;</button>
+        <h2>Settings</h2>
+        <span></span>
+      </div>
+      <div class="settings-list">
+        <div class="settings-group">
+          <div class="settings-item" data-nav="none">
+            <div class="si-icon si-wifi"></div>
+            <span>Wi-Fi</span><span class="si-detail">Home-5G &rsaquo;</span>
+          </div>
+          <div class="settings-item" data-nav="none">
+            <div class="si-icon si-bluetooth"></div>
+            <span>Bluetooth</span><span class="si-detail">On &rsaquo;</span>
+          </div>
+          <div class="settings-item" data-nav="none">
+            <div class="si-icon si-cellular"></div>
+            <span>Cellular</span><span class="si-detail">&rsaquo;</span>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-item" data-nav="none">
+            <div class="si-icon si-notifications"></div>
+            <span>Notifications</span><span class="si-detail">&rsaquo;</span>
+          </div>
+          <div class="settings-item" data-nav="none">
+            <div class="si-icon si-sounds"></div>
+            <span>Sounds &amp; Haptics</span><span class="si-detail">&rsaquo;</span>
+          </div>
+          <div class="settings-item" data-nav="none">
+            <div class="si-icon si-focus"></div>
+            <span>Focus</span><span class="si-detail">&rsaquo;</span>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-item highlight" data-nav="delegation-screen">
+            <div class="si-icon si-delegation"></div>
+            <span>Call Delegation</span><span class="si-detail">&rsaquo;</span>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-item" data-nav="none">
+            <div class="si-icon si-general"></div>
+            <span>General</span><span class="si-detail">&rsaquo;</span>
+          </div>
+          <div class="settings-item" data-nav="none">
+            <div class="si-icon si-display"></div>
+            <span>Display &amp; Brightness</span><span class="si-detail">&rsaquo;</span>
+          </div>
+          <div class="settings-item" data-nav="none">
+            <div class="si-icon si-wallpaper"></div>
+            <span>Wallpaper</span><span class="si-detail">&rsaquo;</span>
+          </div>
+          <div class="settings-item" data-nav="none">
+            <div class="si-icon si-privacy"></div>
+            <span>Privacy &amp; Security</span><span class="si-detail">&rsaquo;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== CALL DELEGATION ==================== -->
+    <div id="delegation-screen" class="screen">
+      <div class="app-header">
+        <button class="back-btn" data-back="settings-screen">&#8249;</button>
+        <h2>Call Delegation</h2>
+        <span></span>
+      </div>
+      <div class="delegation-content">
+        <!-- Relay Logo -->
+        <div class="delegation-hero">
+          <div class="relay-logo-container">
+            <div class="relay-pulse-ring"></div>
+            <div class="relay-pulse-ring"></div>
+            <div class="relay-pulse-ring"></div>
+            <div class="relay-logo-ring">
+              <div class="relay-logo-inner" id="relay-logo-placeholder">
+                <img
+                  src="https://media.discordapp.net/attachments/692498995595051019/1490625593237049374/RelayLogoOfficial.png?ex=69d4bcc3&is=69d36b43&hm=f7ef01d82276cf8fbcdc57940f41e61fd6f2f63fb7ee7dd3bb7cea3f5fefda7f&=&format=webp&quality=lossless&width=992&height=1260"
+                  alt="Relay" class="relay-logo-img">
+              </div>
+            </div>
+          </div>
+          <p class="delegation-subtitle">Configure call delegation and manage agents</p>
+        </div>
+
+        <!-- Agent List -->
+        <div class="settings-group">
+          <p class="group-label">Active Agents</p>
+          <div class="agent-item" data-agent-detail="relay">
+            <div class="agent-dot green"></div>
+            <div class="agent-info">
+              <span class="agent-name">Relay</span>
+              <span class="agent-desc">Friends, family, personal calls</span>
+            </div>
+            <span class="si-detail">&rsaquo;</span>
+          </div>
+          <div class="agent-item" data-agent-detail="restaurant">
+            <div class="agent-dot blue"></div>
+            <div class="agent-info">
+              <span class="agent-name">Concierge</span>
+              <span class="agent-desc">Restaurants, reservations, bookings</span>
+            </div>
+            <span class="si-detail">&rsaquo;</span>
+          </div>
+          <div class="agent-item" data-agent-detail="medical">
+            <div class="agent-dot orange"></div>
+            <div class="agent-info">
+              <span class="agent-name">MedAssist</span>
+              <span class="agent-desc">Medical appointments, clinics</span>
+            </div>
+            <span class="si-detail">&rsaquo;</span>
+          </div>
+          <div class="agent-item" data-agent-detail="general">
+            <div class="agent-dot gray"></div>
+            <div class="agent-info">
+              <span class="agent-name">General</span>
+              <span class="agent-desc">Utilities, services, other</span>
+            </div>
+            <span class="si-detail">&rsaquo;</span>
+          </div>
+        </div>
+
+        <!-- Privacy -->
+        <div class="settings-group">
+          <p class="group-label">Privacy</p>
+          <div class="settings-item" data-nav="ledger-screen">
+            <span>Activity Ledger</span>
+            <span class="si-detail">&rsaquo;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== AGENT DETAIL ==================== -->
+    <div id="agent-detail-screen" class="screen">
+      <div class="app-header">
+        <button class="back-btn" data-back="delegation-screen">&#8249;</button>
+        <h2 id="agent-detail-title">Agent</h2>
+        <span></span>
+      </div>
+      <div class="agent-detail-content">
+        <div class="settings-group">
+          <p class="group-label">Voice Engine</p>
+          <div class="detail-row">
+            <span>Provider</span>
+            <span class="si-detail" id="agent-voice-provider">ElevenLabs</span>
+          </div>
+        </div>
+        <div class="settings-group">
+          <p class="group-label">Permissions</p>
+          <div class="toggle-item">
+            <span>Access Calendar</span>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+          <div class="toggle-item">
+            <span>Read Text Conversations</span>
+            <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+          </div>
+          <div class="toggle-item">
+            <span>Access Contacts</span>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+          <div class="toggle-item">
+            <span>Create Calendar Events</span>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+          <div class="toggle-item">
+            <span>Send Follow-up Messages</span>
+            <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+          </div>
+        </div>
+        <div class="settings-group">
+          <p class="group-label">Limitations</p>
+          <div class="toggle-item disabled">
+            <span>Disclose Payment Info</span>
+            <label class="switch"><input type="checkbox" disabled><span class="slider"></span></label>
+          </div>
+          <div class="toggle-item disabled">
+            <span>Clone User Voice</span>
+            <label class="switch"><input type="checkbox" disabled><span class="slider"></span></label>
+          </div>
+          <div class="toggle-item disabled">
+            <span>Access Unpermitted Data</span>
+            <label class="switch"><input type="checkbox" disabled><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== ACTIVITY LEDGER ==================== -->
+    <div id="ledger-screen" class="screen">
+      <div class="app-header">
+        <button class="back-btn" data-back="delegation-screen">&#8249;</button>
+        <h2>Activity Ledger</h2>
+        <span></span>
+      </div>
+      <div class="ledger-content" id="ledger-list">
+        <p class="empty-state">No agent activity yet. Completed calls will appear here.</p>
+      </div>
+    </div>
+
+    <!-- ==================== CONTACTS APP ==================== -->
+    <div id="contacts-screen" class="screen">
+      <div class="app-header">
+        <button class="back-btn" data-back="home-screen">&#8249;</button>
+        <h2>Contacts</h2>
+        <span></span>
+      </div>
+      <div class="contacts-list" id="contacts-list"></div>
+    </div>
+
+    <!-- ==================== CONTACT DETAIL ==================== -->
+    <div id="contact-detail-screen" class="screen">
+      <div class="app-header">
+        <button class="back-btn" data-back="contacts-screen">&#8249;</button>
+        <h2 id="contact-detail-title">Contact</h2>
+        <span></span>
+      </div>
+      <div class="contact-detail-content">
+        <div class="contact-hero">
+          <div class="contact-avatar-large" id="contact-avatar-large"></div>
+          <h2 id="cd-name"></h2>
+          <p class="contact-phone" id="cd-phone"></p>
+        </div>
+        <!-- Action Buttons -->
+        <div class="contact-actions">
+          <button class="contact-action-btn" data-action="none">
+            <div class="cab-icon cab-message"></div>
+            <span>Message</span>
+          </button>
+          <button class="contact-action-btn" data-action="none">
+            <div class="cab-icon cab-call"></div>
+            <span>Call</span>
+          </button>
+          <button class="contact-action-btn" data-action="none">
+            <div class="cab-icon cab-video"></div>
+            <span>Video</span>
+          </button>
+          <button class="contact-action-btn" data-action="none">
+            <div class="cab-icon cab-mail"></div>
+            <span>Mail</span>
+          </button>
+          <button class="contact-action-btn relay-action" data-action="relay" id="btn-contact-relay">
+            <div class="cab-icon cab-relay"></div>
+            <span>Relay</span>
+          </button>
+        </div>
+        <!-- Category Selector -->
+        <div class="settings-group">
+          <p class="group-label">Contact Category</p>
+          <div class="category-selector" id="category-selector">
+            <button class="cat-btn" data-cat="friend">Friend</button>
+            <button class="cat-btn" data-cat="family">Family</button>
+            <button class="cat-btn" data-cat="restaurant">Restaurant</button>
+            <button class="cat-btn" data-cat="medical">Medical</button>
+            <button class="cat-btn active" data-cat="other">Other</button>
+          </div>
+          <p class="category-agent-label">Agent: <span id="assigned-agent">General</span></p>
+        </div>
+        <!-- Contact Info -->
+        <div class="settings-group">
+          <p class="group-label">Info</p>
+          <div class="detail-row">
+            <span>Phone</span>
+            <span class="si-detail" id="cd-phone2"></span>
+          </div>
+          <div class="detail-row">
+            <span>Recent Relay Call</span>
+            <span class="si-detail" id="cd-recent">None</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== CALENDAR APP ==================== -->
+    <div id="calendar-screen" class="screen">
+      <div class="app-header">
+        <button class="back-btn" data-back="home-screen">&#8249;</button>
+        <h2 id="calendar-month-title">April 2026</h2>
+        <span></span>
+      </div>
+      <div class="calendar-content">
+        <div class="calendar-nav">
+          <button id="cal-prev">&lsaquo;</button>
+          <span id="cal-nav-label">April 2026</span>
+          <button id="cal-next">&rsaquo;</button>
+        </div>
+        <div class="calendar-grid-header">
+          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+        <div class="calendar-events">
+          <div class="cal-events-header">
+            <h3 id="cal-selected-date">Today</h3>
+            <button id="btn-add-event" class="add-event-btn">+</button>
+          </div>
+          <div id="cal-events-list" class="cal-events-list">
+            <p class="empty-state">No events</p>
+          </div>
+        </div>
+      </div>
+      <!-- Add Event Modal -->
+      <div id="add-event-modal" class="modal hidden">
+        <div class="modal-content">
+          <h3>New Event</h3>
+          <input type="text" id="new-event-title" placeholder="Event title">
+          <input type="date" id="new-event-date">
+          <input type="time" id="new-event-time">
+          <div class="modal-actions">
+            <button id="btn-cancel-event" class="modal-cancel">Cancel</button>
+            <button id="btn-save-event" class="modal-save">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PHONE / DIALER ==================== -->
+    <div id="phone-screen" class="screen">
+      <div class="app-header">
+        <button class="back-btn" data-back="home-screen">&#8249;</button>
+        <h2>Phone</h2>
+        <span></span>
+      </div>
+      <div class="dialer-content">
+        <input type="tel" id="dialer-number" class="dialer-display" placeholder="Enter number" readonly>
+        <div class="dialer-pad">
+          <button class="dial-key" data-key="1"><span class="dial-num">1</span><span
+              class="dial-sub">&nbsp;</span></button>
+          <button class="dial-key" data-key="2"><span class="dial-num">2</span><span
+              class="dial-sub">ABC</span></button>
+          <button class="dial-key" data-key="3"><span class="dial-num">3</span><span
+              class="dial-sub">DEF</span></button>
+          <button class="dial-key" data-key="4"><span class="dial-num">4</span><span
+              class="dial-sub">GHI</span></button>
+          <button class="dial-key" data-key="5"><span class="dial-num">5</span><span
+              class="dial-sub">JKL</span></button>
+          <button class="dial-key" data-key="6"><span class="dial-num">6</span><span
+              class="dial-sub">MNO</span></button>
+          <button class="dial-key" data-key="7"><span class="dial-num">7</span><span
+              class="dial-sub">PQRS</span></button>
+          <button class="dial-key" data-key="8"><span class="dial-num">8</span><span
+              class="dial-sub">TUV</span></button>
+          <button class="dial-key" data-key="9"><span class="dial-num">9</span><span
+              class="dial-sub">WXYZ</span></button>
+          <button class="dial-key" data-key="*"><span class="dial-num">*</span><span
+              class="dial-sub">&nbsp;</span></button>
+          <button class="dial-key" data-key="0"><span class="dial-num">0</span><span class="dial-sub">+</span></button>
+          <button class="dial-key" data-key="#"><span class="dial-num">#</span><span
+              class="dial-sub">&nbsp;</span></button>
+        </div>
+        <div class="dialer-actions">
+          <button id="btn-dialer-call" class="dialer-call-btn">
+            <span>📞</span>
+          </button>
+          <button id="btn-dialer-relay" class="dialer-relay-btn">
+            <span>R</span>
+            <span class="dialer-relay-label">Relay</span>
+          </button>
+        </div>
+        <button id="btn-dialer-delete" class="dialer-delete-btn">&#9003;</button>
+      </div>
+    </div>
+
+    <!-- ==================== CALL SETUP ==================== -->
+    <div id="setup-screen" class="screen">
+      <div class="app-header">
+        <button class="back-btn" id="setup-back-btn">&#8249;</button>
+        <h2>Relay Call</h2>
+        <span></span>
+      </div>
+      <div class="form">
+        <div class="setup-agent-badge" id="setup-agent-badge">
+          <span class="agent-dot green"></span>
+          <span id="setup-agent-name">Relay</span>
+        </div>
+
+        <label>Who is Relay calling?</label>
+        <input type="text" id="contact-name" placeholder="e.g. Dr. Smith's Office">
+
+        <label>What should the agent do?</label>
+        <div class="task-input-row">
+          <textarea id="task-desc" rows="4"
+            placeholder="e.g. Book an appointment for Thursday after 2pm. My name is Kenny Huang."></textarea>
+          <button id="btn-voice-task" class="voice-task-btn">Tap to Dictate</button>
+        </div>
+
+        <label>How will you communicate during the call?</label>
+        <div class="toggle-row">
+          <button class="toggle-btn active" data-mode="sms">Text</button>
+          <button class="toggle-btn" data-mode="voice">Voice</button>
+        </div>
+
+        <button id="btn-start-call" class="primary-btn">Start Call</button>
+      </div>
+    </div>
+
+    <!-- ==================== ACTIVE CALL ==================== -->
+    <div id="call-screen" class="screen">
+      <div class="call-bar">
+        <div class="call-bar-left">
+          <div class="avatar"></div>
+          <div>
+            <div id="call-name" class="call-name">Contact</div>
+            <div class="relay-tag" id="call-agent-tag">Relay Active</div>
+          </div>
+        </div>
+        <div id="timer" class="timer">00:00</div>
+      </div>
+
+      <div id="transcript" class="transcript"></div>
+
+      <!-- SMS input -->
+      <div id="sms-bar" class="input-bar">
+        <input type="text" id="sms-input" placeholder="Respond as the other party...">
+        <button id="btn-sms-send" class="send-btn">Send</button>
+      </div>
+
+      <!-- Voice input -->
+      <div id="voice-bar" class="input-bar" style="display:none">
+        <button id="btn-mic" class="mic-btn">Hold to Speak</button>
+      </div>
+
+      <button id="btn-switch-mode" class="switch-mode-btn">Switch to Voice</button>
+      <button id="btn-end-call" class="end-btn">End Call</button>
+    </div>
+
+    <!-- ==================== POST-CALL ==================== -->
+    <div id="postcall-screen" class="screen">
+      <div class="app-header">
+        <button class="back-btn" data-back="home-screen">&#8249;</button>
+        <h2>Call Complete</h2>
+        <span></span>
+      </div>
+      <div class="postcall-summary">
+        <div class="postcall-agent" id="postcall-agent">Relay</div>
+        <p class="subtitle" id="call-duration"></p>
+      </div>
+      <div id="final-transcript" class="transcript"></div>
+      <button id="btn-new-call" class="primary-btn">Done</button>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
 </body>
 
 </html>
