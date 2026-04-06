@@ -11,6 +11,7 @@ let mode = 'sms';
 let timerInterval = null;
 let seconds = 0;
 let recognition = null;
+const BACKEND_HTTP = BACKEND.replace('wss://', 'https://');
 
 // ============================================================
 // SCREEN MANAGEMENT
@@ -166,6 +167,23 @@ function endCall(transcript) {
 }
 
 // ============================================================
+// MID-CALL MODE SWITCH
+// ============================================================
+document.getElementById('btn-switch-mode').addEventListener('click', () => {
+  if (mode === 'sms') {
+    mode = 'voice';
+    document.getElementById('sms-bar').style.display = 'none';
+    document.getElementById('voice-bar').style.display = 'flex';
+    document.getElementById('btn-switch-mode').textContent = 'Switch to Text';
+  } else {
+    mode = 'sms';
+    document.getElementById('sms-bar').style.display = 'flex';
+    document.getElementById('voice-bar').style.display = 'none';
+    document.getElementById('btn-switch-mode').textContent = 'Switch to Voice';
+  }
+});
+
+// ============================================================
 // VOICE TASK ENTRY (dictate task description)
 // ============================================================
 const voiceTaskBtn = document.getElementById('btn-voice-task');
@@ -263,6 +281,7 @@ document.getElementById('btn-start-call').addEventListener('click', async () => 
     // Show correct input
     document.getElementById('sms-bar').style.display = mode === 'sms' ? 'flex' : 'none';
     document.getElementById('voice-bar').style.display = mode === 'voice' ? 'flex' : 'none';
+    document.getElementById('btn-switch-mode').textContent = mode === 'sms' ? 'Switch to Voice' : 'Switch to Text';
 
     startTimer();
     addMsg('system', 'Connecting to Relay...');
@@ -297,7 +316,7 @@ document.getElementById('sms-input').addEventListener('keydown', (e) => {
 // ============================================================
 // VOICE INPUT (MediaRecorder - works on iOS and Android)
 // ============================================================
-const BACKEND_HTTP = BACKEND.replace('wss://', 'https://');
+//const BACKEND_HTTP = BACKEND.replace('wss://', 'https://'); OLD REPEAT
 let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
