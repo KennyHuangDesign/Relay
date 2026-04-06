@@ -166,6 +166,86 @@ function endCall(transcript) {
 }
 
 // ============================================================
+// VOICE TASK ENTRY (dictate task description)
+// ============================================================
+const voiceTaskBtn = document.getElementById('btn-voice-task');
+let taskRecorder = null;
+let taskAudioChunks = [];
+let taskRecording = false;
+
+voiceTaskBtn.addEventListener('click', async () => {
+  if (!taskRecording) {
+    // Start recording
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      let mimeType = 'audio/webm';
+      if (typeof MediaRecorder.isTypeSupported === 'function') {
+        if (!MediaRecorder.isTypeSupported('audio/webm')) mimeType = 'audio/mp4';
+        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = '';
+      }
+      const options = mimeType ? { mimeType } : {};
+      taskRecorder = new MediaRecorder(stream, options);
+      taskAudioChunks = [];
+
+      taskRecorder.ondataavailable = (ev) => {
+        if (ev.data.size > 0) taskAudioChunks.push(ev.data);
+      };
+
+      taskRecorder.start();
+      taskRecording = true;
+      voiceTaskBtn.textContent = 'Tap to Stop';
+      voiceTaskBtn.classList.add('recording');
+    } catch (err) {
+      alert('Microphone access denied.');
+    }
+  } else {
+    // Stop recording and transcribe
+    voiceTaskBtn.textContent = 'Transcribing...';
+    voiceTaskBtn.classList.remove('recording');
+
+    taskRecorder.onstop = async () => {
+      taskRecorder.stream.getTracks().forEach(t => t.stop());
+      taskRecording = false;
+
+      if (taskAudioChunks.length === 0) {
+        voiceTaskBtn.textContent = 'Tap to Dictate';
+        return;
+      }
+
+      const blob = new Blob(taskAudioChunks, { type: taskRecorder.mimeType });
+      let ext = 'webm';
+      if (blob.type.includes('mp4')) ext = 'mp4';
+
+      const formData = new FormData();
+      formData.append('audio', blob, 'task.' + ext);
+
+      try {
+        const response = await fetch(BACKEND_HTTP + '/transcribe', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        if (data.text) {
+          const textarea = document.getElementById('task-desc');
+          // Append to existing text if there's already content
+          if (textarea.value.trim()) {
+            textarea.value = textarea.value.trim() + ' ' + data.text;
+          } else {
+            textarea.value = data.text;
+          }
+        }
+      } catch (err) {
+        console.error('Task transcription error:', err);
+      }
+
+      voiceTaskBtn.textContent = 'Tap to Dictate';
+    };
+
+    taskRecorder.stop();
+  }
+});
+
+// ============================================================
 // START CALL
 // ============================================================
 document.getElementById('btn-start-call').addEventListener('click', async () => {
