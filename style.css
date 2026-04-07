@@ -249,7 +249,7 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: url('https://cdn.discordapp.com/attachments/692498995595051019/1490565385244643468/iphonebg.jpg?ex=69d484b1&is=69d33331&hm=2fcb282a707a7fbfc12c5cde2d9e9debee64d1e3b8fd49dac1c9482e6851f547&') center/cover no-repeat;
+  background: url('relayassets/iphonebg.jpg') center/cover no-repeat;
   background-size: cover;
   background-position: center;
   position: relative;
