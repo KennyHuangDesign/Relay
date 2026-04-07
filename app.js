@@ -18,6 +18,7 @@ let calendarMonth = 3; // April (0-indexed)
 let calendarSelectedDate = null;
 let navigationStack = [];
 let callHistory = []; // for activity ledger
+let audioCtx = null;
 
 // ============================================================
 // CONTACTS DATA
