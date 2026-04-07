@@ -296,6 +296,15 @@ function openContactDetail(index) {
   const contact = contacts[index];
   currentContactIndex = index;
 
+  // Prime audio
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const silentBuf = audioCtx.createBuffer(1, 1, 22050);
+  const silentSrc = audioCtx.createBufferSource();
+  silentSrc.buffer = silentBuf;
+  silentSrc.connect(audioCtx.destination);
+  silentSrc.start(0);
+
   document.getElementById('cd-name').textContent = contact.name;
   document.getElementById('cd-phone').textContent = contact.phone;
   document.getElementById('cd-phone2').textContent = contact.phone;
@@ -616,10 +625,13 @@ function stopTimer() {
 // ============================================================
 // AUDIO PLAYBACK
 // ============================================================
-let audioCtx = null;
 async function playAudio(base64) {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+  // Try to resume if suspended (will work if a previous gesture primed it)
+  if (audioCtx.state === 'suspended') {
+    try { await audioCtx.resume(); } catch (e) { console.warn('Resume failed:', e); }
+  }
 
   const binary = atob(base64);
   const bytes = new Uint8Array(binary.length);
@@ -732,7 +744,19 @@ document.getElementById('btn-start-call').addEventListener('click', async () => 
   const task = document.getElementById('task-desc').value.trim();
   if (!task) { alert('Describe what the agent should do.'); return; }
 
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+   // Prime audio for iOS Safari - must happen synchronously in the gesture
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  // Play a silent buffer to fully unlock audio playback on iOS
+  const silentBuffer = audioCtx.createBuffer(1, 1, 22050);
+  const silentSource = audioCtx.createBufferSource();
+  silentSource.buffer = silentBuffer;
+  silentSource.connect(audioCtx.destination);
+  silentSource.start(0);
 
   document.getElementById('call-name').textContent = name;
   document.getElementById('call-agent-tag').textContent = agentDisplayNames[currentAgent] + ' Active';
@@ -935,6 +959,14 @@ document.getElementById('btn-dialer-call').addEventListener('click', () => {
 
 document.getElementById('btn-dialer-relay').addEventListener('click', () => {
   const number = document.getElementById('dialer-number').value.trim();
+  // Prime audio
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const silentBuf = audioCtx.createBuffer(1, 1, 22050);
+  const silentSrc = audioCtx.createBufferSource();
+  silentSrc.buffer = silentBuf;
+  silentSrc.connect(audioCtx.destination);
+  silentSrc.start(0);
   currentAgent = 'general';
   currentContactIndex = null;
 
